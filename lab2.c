@@ -22,6 +22,7 @@
 #define TRUE 1
 #define FALSE 0
 #define VACIO -1
+#define maxvalue(type) _Generic(type, int: INT_MAX)
 
 // Estructuras utilizadas
 
@@ -43,6 +44,7 @@ void myprintf(double x, const int is_e);
 void info(char *x);
 void imprimirArreglo(double *x, const unsigned int n, const int is_e);
 void copiarArreglo(double *x, double *y, const unsigned int largo);
+double moda(const int lon, double *v, int *frecuencia);
 
 // MergeSort
 void MergeSort(double *A, const int n);
@@ -87,8 +89,9 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 	double *input, *ms, *qs, *hs, *cs, *tmp, x;
 	double min, max, A, mediana;
 	int cant_datos=0, cant_distintos, k; // k -> cantidad de clases
+    int MAXINT = maxvalue(MAXINT);
 	char check;
-	int is_e = 0, mostrarTodo = 1;
+	int is_e = 0, mostrarTodo = 0;
 	clock_t begin, end;	
 	double time_spent;
 	AVL avl = NULL;
@@ -117,9 +120,6 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 	  	rewind(file);
 	  	input = malloc(sizeof(double));	
 
-	  	//Lee los datos y los guarda en el arreglo input[]
-	  	printf("Leyendo: %s\n", argv[1]);
-
 	  	while (fscanf(file, "%lf", &x) != EOF) {	  		
 	  		input[cant_datos] = x;	
 	  		cant_datos++;
@@ -133,36 +133,21 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 			{
 				input = tmp;
 			}
-	  	}
-	  	printf("\n---------------------------------------------------------------------------------------\n");
+       }
+
+        printf("Se recomienda no mostrar los arreglos por pantalla debido al tiempo que demora en mostrarlos\n");
+	  	printf("Desea mostrar los arreglos por pantalla? Si: 1 No: 0\n");
+	  	do{
+	  		scanf("%d", &mostrarTodo);
+	  	} while (mostrarTodo!=0 && mostrarTodo!=1);
+	  	
 	  	if(mostrarTodo){
 	  		printf("Entrada: \n");
 	  		imprimirArreglo(input, cant_datos, is_e);
 	  	}
 	  	
 
-	  	printf("\n---------------------------------------------------------------------------------------\n");
-
-	  	
-
-	  	printf("MergeSort: \n");
-	  	ms = malloc(cant_datos*sizeof(double));
-	  	copiarArreglo(input, ms, cant_datos);
-	  	begin = clock();
-	  	MergeSort(ms, cant_datos);
-	  	end = clock();
-	  	if(mostrarTodo)
-	  		imprimirArreglo(ms, cant_datos, is_e);
-	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; //Diferencia y transformacion a segundos
-		printf("\nTiempo empleado:\t%f\n", time_spent);
-
-		min = ms[0];
-		max = ms[cant_datos-1];
-
-		free(ms);
-	  	printf("\n---------------------------------------------------------------------------------------\n");
-
-	  	
+	  	printf("\n////////////////////////////////////////////////////////////////////////\n");
 
 	  	printf("QuickSort: \n");
 	  	qs = malloc(cant_datos*sizeof(double));
@@ -172,11 +157,30 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 	  	end = clock();
 	  	if(mostrarTodo)
 	  		imprimirArreglo(qs, cant_datos, is_e);
-	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; //Diferencia y transformacion a segundos
+	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; 
 		printf("\nTiempo empleado:\t%f\n", time_spent);		
-		
-		//free(qs);
-	  	printf("\n---------------------------------------------------------------------------------------\n");	  	
+
+	  	
+	  	printf("\n////////////////////////////////////////////////////////////////////////\n");
+
+	  	
+        printf("MergeSort: \n");
+	  	ms = malloc(cant_datos*sizeof(double));
+	  	copiarArreglo(input, ms, cant_datos);
+	  	begin = clock();
+	  	MergeSort(ms, cant_datos);
+	  	end = clock();
+	  	if(mostrarTodo)
+	  		imprimirArreglo(ms, cant_datos, is_e);
+	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; 
+		printf("\nTiempo empleado:\t%f\n", time_spent);
+
+		min = ms[0];
+		max = ms[cant_datos-1];
+
+		free(ms);
+
+	  	printf("\n////////////////////////////////////////////////////////////////////////\n");	  	
 
 	
 	  	printf("HeapSort: \n");
@@ -187,12 +191,12 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 	  	end = clock();
 	  	if(mostrarTodo)
 	  		imprimirArreglo(hs, cant_datos, is_e);
-	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; //Diferencia y transformacion a segundos
+	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; 
 		printf("\nTiempo empleado:\t%f\n", time_spent);	
 
 		free(hs);
 		rewind(file);
-	  	printf("\n---------------------------------------------------------------------------------------\n");	
+	  	printf("\n////////////////////////////////////////////////////////////////////////\n");	
 	  	
 	  	
 	  	printf("AVL Tree: \n");	  	
@@ -202,12 +206,12 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 	  	end = clock();
 	  	if(mostrarTodo)
 	  		mostrarAVL(avl, is_e);
-	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; //Diferencia y transformacion a segundos				
+	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; 			
 		printf("\nTiempo empleado:\t%f\n", time_spent);	
 		
 		destruirAVL(avl);
 		rewind(file);
-		printf("\n---------------------------------------------------------------------------------------\n");
+		printf("\n////////////////////////////////////////////////////////////////////////\n");
 		
 
 		printf("2-3 Tree: \n");
@@ -217,12 +221,90 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 	  	end = clock();
 	  	if(mostrarTodo)	
 	  		mostrar23(dostres, is_e);
-	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; //Diferencia y transformacion a segundos
+	  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; 
 	  	printf("\nTiempo empleado:\t%f\n", time_spent);
 
 		destruir23(dostres);		
-		printf("\n---------------------------------------------------------------------------------------\n");
+		printf("\n////////////////////////////////////////////////////////////////////////\n");
 
+        if( max > MAXINT) //Verifica el maximo valor de int para no salir del rango
+		{
+			printf("No es posible realizar Ordenamiento por Conteo dado que el elemento maximo ");
+			myprintf(max, is_e);
+			printf("\nes mayor al maximo entero representable (%d) en este computador\n", MAXINT);
+		}
+
+		else {
+			printf("Counting Sort: \n");
+			cs = malloc(cant_datos*sizeof(double));
+		  	copiarArreglo(input, cs, cant_datos);
+		  	begin = clock();
+		  	counting_sort_mm(cs, cant_datos, min, max);
+		  	end = clock();
+		  	if(mostrarTodo)
+		  		imprimirArreglo(cs, cant_datos, is_e);
+		  	time_spent = (double)(end - begin)/CLOCKS_PER_SEC; 
+			printf("\nTiempo empleado:\t%f\n", time_spent);
+			free(cs);
+		}
+
+		free(input);
+		printf("\n////////////////////////////////////////////////////////////////////////\n");
+
+        printf("\n");
+		printf("Cantidad de datos: %d\n", cant_datos);
+
+		printf("Minimo: ");
+		myprintf(min, is_e);
+		printf("\n");
+
+		printf("Maximo: ");
+		myprintf(max, is_e);
+		printf("\n");
+
+		//Elementos distintos
+		cant_distintos = 0;
+		for(int i=0; i<cant_datos; i++) {
+			if(qs[i]==qs[i+1])
+				continue;
+			else
+				cant_distintos++;
+		}
+		printf("Cantidad de elementos distintos: %d\n", cant_distintos);
+
+		// Calculo de la moda
+		int frec = 1; //para obtener la moda
+		printf("Moda: %lf ", moda(cant_datos, qs, &frec));
+		printf("Frecuencia: %d\n", frec);
+
+		// Calculo de la mediana, se usa el arreglo ya ordenado qs[]
+		printf("Mediana: ");
+		if(!cant_datos%2) // cant_datos es par
+			mediana = (qs[(cant_datos/2)-1]+qs[cant_datos/2])/2;
+		else // cant_datos es impar
+			mediana = qs[cant_datos/2];
+		myprintf(mediana, is_e);
+		printf("\n");
+
+
+		// Calculo de cuartiles
+		printf("Cuartiles: \n");	
+		printf("Q1: ");
+		myprintf(qs[(cant_datos/4)-1], is_e);
+		printf("\n");
+		printf("Q2: ");
+		myprintf(mediana, is_e);
+		printf("\n");
+		printf("Q3: ");
+		myprintf(qs[((3*cant_datos)/4)-1], is_e);
+		printf("\n");
+
+
+        printf("\n\n");
+
+	  	free(qs);	  	
+	  	fclose(file);
+	  	return EXIT_SUCCESS;
 	
 
   	} 
@@ -231,6 +313,33 @@ int main (int argc, char *argv[]) {  //argv[0] = ".\lab2" argv[1] = nombre archi
 // END MAIN
 
 ////////////////////////////////////////////
+
+double moda(const int lon, double *v, int *frecuencia)
+{
+	int i=0, cont=1;
+	float moda;
+
+	moda=v[i];
+
+	while(i<lon) {		
+		if(v[i]==v[i+1]) {
+			cont++;
+			i++;
+		}
+		else {
+			if(cont>(*frecuencia)) {
+				moda=v[i];
+				*frecuencia=cont;
+				cont=1;
+				i++;
+			} else {
+				cont=1;
+				i++;
+			}
+		}
+	}
+	return(moda);
+}
 
 /////	MergeSort	////////////////////////
 
